@@ -1,6 +1,7 @@
 package com.myspringproject.my_api.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -91,55 +92,36 @@ public class userController {
 
     }
 
-    @PutMapping("path/{userName}")
-    public ResponseEntity<String> updateUserName(@PathVariable String username, @RequestBody String password, @RequestBody String newName) {
-        if (myService.userExist(username).isSuccess()) {
-            if (myService.authenticate(username, password)) {
-                if (myService.updateUserName(username, newName)) {
-                    return ResponseEntity.ok("Username updated successfuly.");
-                } else {
+    @PutMapping("/updatename/{userName}")
+public ResponseEntity<String> updateUserName(
+        @PathVariable String userName,
+        @RequestBody Map<String, String> request) {
+    
+    String password = request.get("password");
+    String newName = request.get("newName");
 
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username could not be updated!");
-                }
+    if (myService.userExist(userName).isSuccess()) {
+        if (myService.authenticate(userName, password)) {
+            if (myService.updateUserName(userName, newName)) {
+                return ResponseEntity.ok("Username updated successfully.");
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Password is not correct!");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Failed to update username.");
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such user exists!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password.");
         }
-
+    } else {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
     }
+}
 
-    /*
-    public ResponseEntity<UserEntity> updateUser(@PathVariable Long id, @RequestBody UserEntity userDetails) {
-        try {
-            UserEntity updatedUser = userService.updateUser(id, userDetails);
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-    }
-     */
-    @PutMapping("/updatepassword")
-    public ResponseEntity<String> updatePassword(@RequestBody String username, @RequestBody String password, @RequestBody String newPassword) {
-        if (myService.userExist(username).isSuccess()) {
-            if (myService.authenticate(username, password)) {
-                if (myService.updatePassword(username, newPassword)) {
-                    return ResponseEntity.ok("Password updated successfuly.");
-                } else {
-
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password could not be updated!");
-                }
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Existing password is not correct!");
-            }
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such user exists!");
-        }
-
-    }
-    @PutMapping("path/{id}")
-    public ResponseEntity<String>  putMethodName(@PathVariable String id, @RequestBody String username, @RequestBody String password, @RequestBody String newPassword) {
+    @PutMapping("/updatepassword/{username}")
+    public ResponseEntity<String> updatePassword(
+        @PathVariable String username,
+        @RequestBody Map<String, String> request) {
+    
+    String password = request.get("password");
+    String newPassword = request.get("newpassword");
         if (myService.userExist(username).isSuccess()) {
             if (myService.authenticate(username, password)) {
                 if (myService.updatePassword(username, newPassword)) {
@@ -155,12 +137,16 @@ public class userController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such user exists!");
         }
 
-        
-
     }
+   
 
-    @PutMapping("/updateemail")
-    public ResponseEntity<String> updateEmail(@RequestBody String username, @RequestBody String password, @RequestBody String newEmail) {
+    @PutMapping("/updateemail/{id}")
+    public ResponseEntity<String> updateEmail(@PathVariable String id, @RequestBody Map<String, String> request) {
+
+        String username = request.get("username");
+        String password = request.get("password");
+        String newEmail = request.get("newemail");
+
         if (myService.userExist(username).isSuccess()) {
             if (myService.authenticate(username, password)) {
                 if (myService.updateEmail(username, newEmail)) {

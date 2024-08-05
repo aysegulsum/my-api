@@ -79,7 +79,9 @@ public class UserService {
     public boolean updateUserName(String name, String newName) {
 
         try {
-            userRepository.findByUsername(name).setUsername(newName);
+            UserEntity temp =userRepository.findByUsername(name);
+            temp.setUsername(newName);
+            userRepository.save(temp);
             return true;
         } catch (Exception e) {
             return false;
@@ -89,7 +91,9 @@ public class UserService {
     public boolean updatePassword(String name, String password) {
 
         try {
-            userRepository.findByUsername(name).setPassword(password);
+            UserEntity temp = userRepository.findByUsername(name);
+            temp.setPassword(password);
+            userRepository.save(temp);
             return true;
         } catch (Exception e) {
             return false;
@@ -99,7 +103,9 @@ public class UserService {
     public boolean updateEmail(String name, String email) {
 
         try {
-            userRepository.findByUsername(name).setEmail(email);
+            UserEntity temp = userRepository.findByUsername(name);
+            temp.setEmail(email);
+            userRepository.save(temp);
             return true;
         } catch (Exception e) {
             return false;
