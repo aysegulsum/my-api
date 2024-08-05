@@ -37,19 +37,21 @@ public class ToDoController {
             @RequestParam boolean isCompleted) {
 
         ToDoListEntity todo = new ToDoListEntity(id, title, description, isStarted, isCompleted);
-        myService.addToDo(todo);
-        return ResponseEntity.ok("ToDo item added successfully.");
-    }
+        if(myService.addToDo(todo)){
+               return ResponseEntity.ok("ToDo item added successfully.");
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ToDo item could not added!");
+        }
+}
 
     @GetMapping("/list")
     public List<ToDoListEntity> getAllEntities() {
         return myService.getAllData();
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteTodo(@RequestBody Map<String, Object> request) {//, @RequestBody Map<String, String> request){
-        long id = (long) request.get("id");
-
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteTodo(@PathVariable long id) {//, @RequestBody Map<String, String> request){
+        
         if (myService.delete(id)) {
             return ResponseEntity.ok("Delete successful");
         } else {
@@ -59,8 +61,8 @@ public class ToDoController {
     }
 
     @PutMapping("/updatestart/{id}")
-    public ResponseEntity<String> updateStart(@PathVariable long id, @RequestBody String str) {
-        Boolean bool = Boolean.valueOf(str);
+    public ResponseEntity<String> updateStart(@PathVariable long id, @RequestBody Map<String, String> request) {
+        Boolean bool = Boolean.valueOf(request.get("str"));
         if (myService.updateStart(id, bool)) {
             return ResponseEntity.ok("Updated successfuly");
         } else {
@@ -70,8 +72,8 @@ public class ToDoController {
     }
 
     @PutMapping("/updatecomplete/{id}")
-    public ResponseEntity<String> updateComplete(@PathVariable long id, @RequestBody String str) {
-        Boolean bool = Boolean.valueOf(str);
+    public ResponseEntity<String> updateComplete(@PathVariable long id, @RequestBody Map<String, String> request) {
+        Boolean bool = Boolean.valueOf(request.get("str"));
         if (myService.updateComplete(id, bool)) {
             return ResponseEntity.ok("Updated successfuly");
         } else {

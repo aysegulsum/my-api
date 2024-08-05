@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -20,14 +21,25 @@ public class ToDoService {
         this.toDoRepository = toDoRepository;
     }
 
-    public ToDoListEntity addToDo(ToDoListEntity todo) {
-        return toDoRepository.save(todo);
+    public boolean addToDo(ToDoListEntity todo) {
+        try {
+            toDoRepository.save(todo);
+            return true; 
+        } catch (Exception e) {
+            return false;
+        }
+    
     }
 
     public List<ToDoListEntity> getAllData() {
-        return toDoRepository.findAll();
+        try {
+            return toDoRepository.findAll();
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+       
     }
-
+/*
     public boolean delete(long id) {
         try {
             ToDoListEntity todo = this.toDoRepository.findById(id);
@@ -37,6 +49,21 @@ public class ToDoService {
             return false;
         }
     }
+*/
+
+public boolean delete(long id) {
+    try {
+        Optional<ToDoListEntity> optionalTodo = Optional.ofNullable(this.toDoRepository.findById(id));
+        if (optionalTodo.isPresent()) {
+            toDoRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+    } catch (Exception e) {
+        return false;
+    }
+}
 
     public boolean updateStart(long id, boolean bool) {
         try {
