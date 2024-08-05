@@ -49,7 +49,7 @@ public class ToDoController {
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteTodo(@RequestBody Map<String, Object> request) {//, @RequestBody Map<String, String> request){
         long id = (long) request.get("id");
-        
+
         if (myService.delete(id)) {
             return ResponseEntity.ok("Delete successful");
         } else {
@@ -78,4 +78,21 @@ public class ToDoController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ToDo could not be updated!");
         }
     }
+
+    @GetMapping("/print")
+    public String getCatagories() {
+        Map<String, List<ToDoListEntity>> groupedTodos = myService.group();
+        StringBuilder result = new StringBuilder();
+
+        for (Map.Entry<String, List<ToDoListEntity>> entry : groupedTodos.entrySet()) {
+            result.append("Title: ").append(entry.getKey()).append("\n");
+            for (ToDoListEntity todo : entry.getValue()) {
+                result.append("  Description: ").append(todo.getDescription()).append("\n");
+            }
+            result.append("\n");
+        }
+        return result.toString();
+    }
 }
+
+

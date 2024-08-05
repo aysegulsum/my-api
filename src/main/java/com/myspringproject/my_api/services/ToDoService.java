@@ -1,6 +1,9 @@
 package com.myspringproject.my_api.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -42,8 +45,8 @@ public class ToDoService {
             toDoRepository.save(temp);
             return true;
         } catch (Exception e) {
-        return false;
-    }
+            return false;
+        }
     }
 
     public boolean updateComplete(long id, boolean bool) {
@@ -53,8 +56,23 @@ public class ToDoService {
             toDoRepository.save(temp);
             return true;
         } catch (Exception e) {
-        return false;
+            return false;
+        }
     }
+
+    public Map<String, List<ToDoListEntity>> group() {
+        try {
+            Map<String, List<ToDoListEntity>> groupedTodos = new HashMap<>();
+            for (ToDoListEntity todo : toDoRepository.findAll()) {
+                groupedTodos.computeIfAbsent(todo.getTitle(), k -> new ArrayList<>()).add(todo);
+    
+            }
+            return groupedTodos;
+        } catch (Exception e) {
+            //e.printStackTrace(); 
+            return new HashMap<>();
+        }
+       
     }
 
 }
